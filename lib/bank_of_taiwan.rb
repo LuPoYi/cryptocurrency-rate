@@ -1,7 +1,6 @@
-require 'nokogiri'
-require 'open-uri'
-
 module BankOfTaiwan
+  extend Base
+
   def self.start!
     currencies = ['USD', 'JPY']
     
@@ -26,13 +25,9 @@ module BankOfTaiwan
         spot_buying = a.search('td.rate-content-sight')[0].content
         spot_avg = (spot_selling.to_f + spot_buying.to_f) / 2.0
 
-        set_redis("#{currency}:TWD", spot_avg)
+        set_redis("BOT", "#{currency}:TWD", spot_avg)
       end
     end
   end
 
-  def self.set_redis(field, values)
-    puts "set field #{field} values #{values}"
-    $redis.hset('BOT', field, values)
-  end
 end
